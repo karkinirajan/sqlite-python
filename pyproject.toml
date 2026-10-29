@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sqlite-python"
+version = "1.0.0"
+description = "Reference examples for using SQLite from Python: a customers table with safe CRUD helpers and a CLI."
+readme = "README.md"
+requires-python = ">=3.13"
+license = { file = "LICENSE" }
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sqlite_python"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src"]
+# bot.py is unrelated to this SQLite project and is intentionally left untouched.
+extend-exclude = ["bot.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

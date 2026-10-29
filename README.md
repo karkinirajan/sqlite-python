@@ -1,79 +1,71 @@
-# Sqlite with Python
+# sqlite-python
 
-## Overview  
+A small, tested reference for using SQLite from Python's standard library: a `customers` table with safe create/read/delete helpers and a command-line tool. No third-party dependencies.
 
-**sqlite-python** is a reference project demonstrating the use of SQLite with Python. This repository provides examples and scripts for performing basic database operations, making it a helpful resource for learning and implementing SQLite in Python projects.  
+## What it shows
 
----
+- Parameterised queries everywhere (no string-built SQL), including values that look like SQL injection.
+- A `connect()` context manager that commits on success, rolls back on error and always closes the connection.
+- Atomic bulk inserts (`add_many` either adds every row or none).
+- Typed results (`Customer` dataclass) instead of printing inside the data layer.
+- Compatibility with the original tutorial database (same `customers(first_name, last_name, email)` schema).
 
-## Features  
+## Install
 
-- **Database Integration**:  
-  - Demonstrates how to connect Python applications to an SQLite database.  
+Requires Python 3.13 and [uv](https://docs.astral.sh/uv/).
 
-- **CRUD Operations**:  
-  - Includes examples for creating, reading, updating, and deleting records.  
+```bash
+git clone https://github.com/kneeraazon404/sqlite-python.git
+cd sqlite-python
+uv sync
+```
 
-- **Lightweight and Simple**:  
-  - Designed for beginners or as a quick reference for experienced developers.  
+## Use as a library
 
----
+```python
+from sqlite_python import add_one, add_many, all_customers, email_lookup, delete_one, init_db
 
-## Technology Stack  
+init_db("customer.db")
+add_one("Laura", "Smith", "laura@smith.com", "customer.db")
+add_many([("Wes", "Brown", "wes@brown.com")], "customer.db")
+print(all_customers("customer.db"))      # [Customer(rowid=1, ...), ...]
+print(email_lookup("wes@brown.com", "customer.db"))
+delete_one(1, "customer.db")             # True if a row was removed
+```
 
-- **Language**: Python  
-- **Database**: SQLite  
+Every function takes an optional database path (default `customer.db`, or `SQLITE_PYTHON_DB`).
 
----
+## Command line
 
-## Getting Started  
+```bash
+uv run python -m sqlite_python seed                      # create table + 7 sample customers
+uv run python -m sqlite_python list
+uv run python -m sqlite_python add Laura Smith laura@smith.com
+uv run python -m sqlite_python lookup laura@smith.com
+uv run python -m sqlite_python delete 3
+uv run python -m sqlite_python --db other.db list        # use a different file
+```
 
-### Prerequisites  
+## Testing
 
-Ensure the following are installed:  
-- Python 3.8 or higher  
+```bash
+uv run pytest -q
+uv run ruff check . && uv run ruff format --check .
+```
 
-### Installation  
+14 tests cover the helpers, atomicity, rollback and closing, SQL-injection text, multi-digit ids, a database created by the original script, and the CLI.
 
-1. Clone the repository:  
-   ```bash  
-   git clone https://github.com/kneeraazon404/sqlite-python.git  
-   cd sqlite-python  
-   ```  
+## Project structure
 
-2. Install required dependencies (if any):  
-   ```bash  
-   pip install -r requirements.txt  
-   ```  
+```
+src/sqlite_python/   db.py (data access), __main__.py (CLI)
+tests/               pytest suite
+```
 
-3. Run the scripts:  
-   ```bash  
-   python <script_name>.py  
-   ```  
+## Note on `bot.py`
 
----
+`bot.py` is unrelated to SQLite and is not part of this project; it has been left exactly as it was and is excluded from linting and documentation.
 
-## License  
+## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.  
-
----
-
-## Contributions  
-
-Contributions are welcome! To contribute:  
-
-1. Fork the repository.  
-2. Create a feature branch:  
-   ```bash  
-   git checkout -b feature-name  
-   ```  
-3. Commit your changes:  
-   ```bash  
-   git commit -m "Add feature-name"  
-   ```  
-4. Push to your fork:  
-   ```bash  
-   git push origin feature-name  
-   ```  
-
+Apache License 2.0. See [LICENSE](LICENSE).

@@ -1,0 +1,8 @@
+# Local databases
+*.db
+*.sqlite3
+
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
