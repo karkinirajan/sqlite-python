@@ -28,9 +28,9 @@ from sqlite_python import add_one, add_many, all_customers, email_lookup, delete
 init_db("customer.db")
 add_one("Laura", "Smith", "laura@smith.com", "customer.db")
 add_many([("Wes", "Brown", "wes@brown.com")], "customer.db")
-print(all_customers("customer.db"))      # [Customer(rowid=1, ...), ...]
+print(all_customers("customer.db"))  # [Customer(rowid=1, ...), ...]
 print(email_lookup("wes@brown.com", "customer.db"))
-delete_one(1, "customer.db")             # True if a row was removed
+delete_one(1, "customer.db")  # True if a row was removed
 ```
 
 Every function takes an optional database path (default `customer.db`, or `SQLITE_PYTHON_DB`).
